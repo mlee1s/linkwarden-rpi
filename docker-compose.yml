@@ -4,14 +4,17 @@ services:
     image: postgres:16-alpine
     env_file: .env
     restart: always
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - ./pgdata:/var/lib/postgresql/data
   linkwarden:
+    build: .
     env_file: .env
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
     restart: always
-    image: ghcr.io/linkwarden/linkwarden:latest
+    # image: ghcr.io/linkwarden/linkwarden:latest
     ports:
       - 3000:3000
     volumes:

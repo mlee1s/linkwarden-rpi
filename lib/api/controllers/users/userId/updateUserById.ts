@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/api/db";
 import { AccountSettings } from "@/types/global";
-import bcrypt from "bcrypt";
+// https://stackoverflow.com/questions/29320201/error-installing-bcrypt-with-npm
+import { hashSync } from "bcrypt-ts";
 import removeFile from "@/lib/api/storage/removeFile";
 import createFile from "@/lib/api/storage/createFile";
 import updateCustomerEmail from "@/lib/api/updateCustomerEmail";
@@ -122,7 +123,7 @@ export default async function updateUserById(
   // Other settings
 
   const saltRounds = 10;
-  const newHashedPassword = bcrypt.hashSync(data.newPassword || "", saltRounds);
+  const newHashedPassword = hashSync(data.newPassword || "", saltRounds);
 
   const updatedUser = await prisma.user.update({
     where: {

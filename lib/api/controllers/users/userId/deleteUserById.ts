@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/api/db";
-import bcrypt from "bcrypt";
+// https://stackoverflow.com/questions/29320201/error-installing-bcrypt-with-npm
+import { compareSync } from "bcrypt-ts";
 import removeFolder from "@/lib/api/storage/removeFolder";
 import Stripe from "stripe";
 import { DeleteUserBody } from "@/types/global";
@@ -23,7 +24,7 @@ export default async function deleteUserById(
 
   // Then, we check if the provided password matches the one stored in the database (disabled in Keycloak integration)
   if (!process.env.KEYCLOAK_CLIENT_SECRET) {
-    const isPasswordValid = bcrypt.compareSync(
+    const isPasswordValid = compareSync(
       body.password,
       user.password as string
     );

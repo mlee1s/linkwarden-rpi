@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/api/db";
 import type { NextApiRequest, NextApiResponse } from "next";
-import bcrypt from "bcrypt";
+// https://stackoverflow.com/questions/29320201/error-installing-bcrypt-with-npm
+import { hashSync } from "bcrypt-ts";
 
 const emailEnabled =
   process.env.EMAIL_FROM && process.env.EMAIL_SERVER ? true : false;
@@ -69,7 +70,7 @@ export default async function postUser(
   if (!checkIfUserExists) {
     const saltRounds = 10;
 
-    const hashedPassword = bcrypt.hashSync(body.password, saltRounds);
+    const hashedPassword = hashSync(body.password, saltRounds);
 
     await prisma.user.create({
       data: {

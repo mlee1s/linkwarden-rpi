@@ -75,7 +75,9 @@ export default async function archive(
 
       if (linkExists && !faulty) {
         if (user.archiveAsScreenshot) {
-          const screenshot = await page.screenshot({ fullPage: true });
+
+          // https://github.com/microsoft/playwright/issues/27893
+          const screenshot = await page.screenshot({ fullPage: true, timeout: Number(process.env.AUTOSCROLL_TIMEOUT) || 30 });
           await createFile({
             data: screenshot,
             filePath: `archives/${linkExists.collectionId}/${linkId}.png`,

@@ -2,7 +2,8 @@ import { prisma } from "@/lib/api/db";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AuthOptions } from "next-auth";
-import bcrypt from "bcrypt";
+// https://stackoverflow.com/questions/29320201/error-installing-bcrypt-with-npm
+import { compareSync } from "bcrypt-ts";
 import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { Adapter } from "next-auth/adapters";
@@ -54,7 +55,7 @@ const providers: Provider[] = [
       let passwordMatches: boolean = false;
 
       if (user?.password) {
-        passwordMatches = bcrypt.compareSync(password, user.password);
+        passwordMatches = compareSync(password, user.password);
       }
 
       if (passwordMatches) {
