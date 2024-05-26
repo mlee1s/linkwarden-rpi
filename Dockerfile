@@ -53,7 +53,7 @@ RUN rm -rf /root/.cache/ms-playwright/chromium-1067/chrome-linux/
 RUN cd /tmp; \
     snap download chromium; \
     mkdir chrome; \
-    unsquashfs -f -d  ./chrome chromium_2716.snap; \
+    unsquashfs -f -d  ./chrome chromium_*.snap; \
     mv ./chrome/usr/lib/chromium-browser /root/.cache/ms-playwright/chromium-1067/chrome-linux; \
     cd /data
 
