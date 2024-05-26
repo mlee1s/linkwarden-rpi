@@ -2,10 +2,10 @@
   <img src="./assets/logo.png" width="100px" />
   <h1>Linkwarden</h1>
 
-<a href="https://discord.com/invite/CtuYV47nuJ"><img src="https://img.shields.io/discord/1117993124669702164?logo=discord&style=flat-square" alt="Discord"></a>
-<img alt="GitHub commits since latest release (by SemVer including pre-releases)" src="https://img.shields.io/github/commits-since/linkwarden/linkwarden/v1.1.0/dev">
-<img src="https://img.shields.io/github/languages/top/linkwarden/linkwarden?style=flat-square" alt="Top Language">
-<img src="https://img.shields.io/github/stars/linkwarden/linkwarden?style=flat-square" alt="Github Stars">
+<a href="https://discord.com/invite/CtuYV47nuJ"><img src="https://img.shields.io/discord/1117993124669702164?logo=discord&style=flat" alt="Discord"></a>
+<a href="https://twitter.com/LinkwardenHQ"><img src="https://img.shields.io/twitter/follow/linkwarden" alt="Twitter"></a>
+
+<img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/linkwarden/linkwarden/latest/dev?style=for-the-badge&label=COMMITS%20SINCE%20LATEST%20RELEASE">
 
 </div>
 
@@ -17,7 +17,9 @@
 
 ## Intro & motivation
 
-**Linkwarden is a self-hosted, open-source collaborative bookmark manager to collect, organize and archive webpages.** The objective is to organize useful webpages and articles you find across the web in one place, and since useful webpages can go away (see the inevitability of [Link Rot](https://www.howtogeek.com/786227/what-is-link-rot-and-how-does-it-threaten-the-web/)), Linkwarden also saves a copy of each webpage as a Screenshot and PDF, ensuring accessibility even if the original content is no longer available.
+**Linkwarden is a self-hosted, open-source collaborative bookmark manager to collect, organize and archive webpages.**
+
+The objective is to organize useful webpages and articles you find across the web in one place, and since useful webpages can go away (see the inevitability of [Link Rot](https://www.howtogeek.com/786227/what-is-link-rot-and-how-does-it-threaten-the-web/)), Linkwarden also saves a copy of each webpage as a Screenshot and PDF, ensuring accessibility even if the original content is no longer available.
 
 Additionally, Linkwarden is designed with collaboration in mind, sharing links with the public and/or allowing multiple users to work together seamlessly.
 
@@ -27,17 +29,21 @@ Additionally, Linkwarden is designed with collaboration in mind, sharing links w
 <img src="./assets/dashboard.png" />
 
 <div align="center">
-<img src="./assets/all_links.png" width="32%" />
+<img src="./assets/all_links.jpg" width="23%" />
 
-<img src="./assets/all_collections.png" width="32%" />
+<img src="./assets/list_view.jpg" width="23%" />
 
-<img src="./assets/manage_team.png" width="32%" />
+<img src="./assets/all_collections.jpg" width="23%" />
 
-<img src="./assets/readable_view.png" width="32%" />
+<img src="./assets/manage_team.jpg" width="23%" />
 
-<img src="./assets/public_page.png" width="32%" />
+<img src="./assets/readable_view.jpg" width="23%" />
 
-<img src="./assets/light_mode.png" width="32%" />
+<img src="./assets/preserved_formats.jpg" width="23%" />
+
+<img src="./assets/public_page.jpg" width="23%" />
+
+<img src="./assets/light_dashboard.jpg" width="23%" />
 </div>
 
 <details>
@@ -53,7 +59,7 @@ We've forked the old version from the current repository into [this repo](https:
 
 - 📸 Auto capture a screenshot, PDF, and readable view of each webpage.
 - 🏛️ Send your webpage to Wayback Machine ([archive.org](https://archive.org)) for a snapshot. (Optional)
-- 📂 Organize links by collection, name, description and multiple tags.
+- 📂 Organize links by collection, sub-collection, name, description and multiple tags.
 - 👥 Collaborate on gathering links in a collection.
 - 🎛️ Customize the permissions of each member.
 - 🌐 Share your collected links and preserved formats with the world.
@@ -62,10 +68,27 @@ We've forked the old version from the current repository into [this repo](https:
 - 📱 Responsive design and supports most modern browsers.
 - 🌓 Dark/Light mode support.
 - 🧩 Browser extension, managed by the community. [Star it here!](https://github.com/linkwarden/browser-extension)
-- ⬇️ Import your bookmarks from other browsers.
-- ⚡️ Powerful API.
-- 🔐 SSO and Keycloak integration. (Enterprise and Self-hosted users only)
-- ✅ And many more features!
+- ⬇️ Import and export your bookmarks.
+- 🔐 SSO integration. (Enterprise and Self-hosted users only)
+- 📦 Installable Progressive Web App (PWA).
+- 🍎 iOS Shortcut to save links to Linkwarden.
+- 🔑 API keys.
+- ✅ Bulk actions.
+- ✨ And so many more features!
+
+## Like what we're doing? Give us a Star ⭐
+
+![Star Us](https://raw.githubusercontent.com/linkwarden/linkwarden/main/assets/star_repo.gif)
+
+## We're building our Community 🌐
+
+Join and follow us in the following platforms to stay up to date about the most recent features and for support:
+
+<a href="https://discord.com/invite/CtuYV47nuJ"><img src="https://img.shields.io/discord/1117993124669702164?logo=discord&style=flat" alt="Discord"></a>
+
+<a href="https://twitter.com/LinkwardenHQ"><img src="https://img.shields.io/twitter/follow/linkwarden" alt="Twitter"></a>
+
+<a href="https://fosstodon.org/@linkwarden"><img src="https://img.shields.io/mastodon/follow/110748840237143200?domain=https%3A%2F%2Ffosstodon.org" alt="Mastodon"></a>
 
 ## Suggestions
 
@@ -79,17 +102,9 @@ Make sure to check out our [public roadmap](https://github.com/orgs/linkwarden/p
 
 For information on how to get started or to set up your own instance, please visit the [documentation](https://docs.linkwarden.app).
 
-## Main Tech Stack
-
-- NextJS
-- TypeScript
-- Tailwind
-- Prisma
-- Zustand
-
 ## Development
 
-If you want to contribute, Thanks! Start by checking our [public roadmap](https://github.com/orgs/linkwarden/projects/1), there you'll see a [README for contributers](https://github.com/orgs/linkwarden/projects/1?pane=issue&itemId=34708277) for the rest of the info on how to contribute to this repo.
+If you want to contribute, Thanks! Start by checking our [public roadmap](https://github.com/orgs/linkwarden/projects/1), there you'll see a [README for contributers](https://github.com/orgs/linkwarden/projects/1?pane=issue&itemId=34708277) for the rest of the info on how to contribute and the main tech stack.
 
 ## Security
 
@@ -106,3 +121,9 @@ Here are the other ways to support/cheer this project:
 - Referring Linkwarden to a friend.
 
 If you did any of the above, Thanksss! Otherwise thanks.
+
+## Thanks to All the Contributors 💪
+
+Huge thanks to these guys for spending their time helping Linkwarden grow. They rock! ⚡️
+
+<img src="https://contributors-img.web.app/image?repo=linkwarden/linkwarden" alt="Contributors"/>

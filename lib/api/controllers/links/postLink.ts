@@ -1,17 +1,19 @@
 import { prisma } from "@/lib/api/db";
 import { LinkIncludingShortenedCollectionAndTags } from "@/types/global";
-import getTitle from "@/lib/api/getTitle";
-import archive from "@/lib/api/archive";
+import getTitle from "@/lib/shared/getTitle";
 import { UsersAndCollections } from "@prisma/client";
 import getPermission from "@/lib/api/getPermission";
 import createFolder from "@/lib/api/storage/createFolder";
+import validateUrlSize from "../../validateUrlSize";
+
+const MAX_LINKS_PER_USER = Number(process.env.MAX_LINKS_PER_USER) || 30000;
 
 export default async function postLink(
   link: LinkIncludingShortenedCollectionAndTags,
   userId: number
 ) {
   try {
-    new URL(link.url);
+    new URL(link.url || "");
   } catch (error) {
     return {
       response:
@@ -20,13 +22,55 @@ export default async function postLink(
     };
   }
 
-  if (!link.collection.name) {
-    link.collection.name = "Unorganized";
-  }
+  if (!link.collection.id && link.collection.name) {
+    link.collection.name = link.collection.name.trim();
 
-  link.collection.name = link.collection.name.trim();
+    // find the collection with the name and the user's id
+    const findCollection = await prisma.collection.findFirst({
+      where: {
+        name: link.collection.name,
+        ownerId: userId,
+        parentId: link.collection.parentId,
+      },
+    });
 
-  if (link.collection.id) {
+    if (findCollection) {
+      const collectionIsAccessible = await getPermission({
+        userId,
+        collectionId: findCollection.id,
+      });
+
+      const memberHasAccess = collectionIsAccessible?.members.some(
+        (e: UsersAndCollections) => e.userId === userId && e.canCreate
+      );
+
+      if (!(collectionIsAccessible?.ownerId === userId || memberHasAccess))
+        return { response: "Collection is not accessible.", status: 401 };
+
+      link.collection.id = findCollection.id;
+      link.collection.ownerId = findCollection.ownerId;
+    } else {
+      const collection = await prisma.collection.create({
+        data: {
+          name: link.collection.name,
+          ownerId: userId,
+        },
+      });
+
+      link.collection.id = collection.id;
+
+      await prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          collectionOrder: {
+            push: link.collection.id,
+          },
+        },
+      });
+    }
+  } else if (link.collection.id) {
     const collectionIsAccessible = await getPermission({
       userId,
       collectionId: link.collection.id,
@@ -38,33 +82,103 @@ export default async function postLink(
 
     if (!(collectionIsAccessible?.ownerId === userId || memberHasAccess))
       return { response: "Collection is not accessible.", status: 401 };
+  } else if (!link.collection.id) {
+    link.collection.name = "Unorganized";
+    link.collection.parentId = null;
+
+    // find the collection with the name "Unorganized" and the user's id
+    const unorganizedCollection = await prisma.collection.findFirst({
+      where: {
+        name: "Unorganized",
+        ownerId: userId,
+      },
+    });
+
+    link.collection.id = unorganizedCollection?.id;
+
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        collectionOrder: {
+          push: link.collection.id,
+        },
+      },
+    });
   } else {
-    link.collection.ownerId = userId;
+    return { response: "Uncaught error.", status: 500 };
   }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (user?.preventDuplicateLinks) {
+    const existingLink = await prisma.link.findFirst({
+      where: {
+        url: link.url?.trim(),
+        collection: {
+          ownerId: userId,
+        },
+      },
+    });
+
+    if (existingLink)
+      return {
+        response: "Link already exists",
+        status: 409,
+      };
+  }
+
+  const numberOfLinksTheUserHas = await prisma.link.count({
+    where: {
+      collection: {
+        ownerId: userId,
+      },
+    },
+  });
+
+  if (numberOfLinksTheUserHas + 1 > MAX_LINKS_PER_USER)
+    return {
+      response: `Error: Each user can only have a maximum of ${MAX_LINKS_PER_USER} Links.`,
+      status: 400,
+    };
+
+  link.collection.name = link.collection.name.trim();
 
   const description =
     link.description && link.description !== ""
       ? link.description
-      : await getTitle(link.url);
+      : link.url
+        ? await getTitle(link.url)
+        : undefined;
+
+  const validatedUrl = link.url ? await validateUrlSize(link.url) : undefined;
+
+  const contentType = validatedUrl?.get("content-type");
+  let linkType = "url";
+  let imageExtension = "png";
+
+  if (!link.url) linkType = link.type;
+  else if (contentType === "application/pdf") linkType = "pdf";
+  else if (contentType?.startsWith("image")) {
+    linkType = "image";
+    if (contentType === "image/jpeg") imageExtension = "jpeg";
+    else if (contentType === "image/png") imageExtension = "png";
+  }
 
   const newLink = await prisma.link.create({
     data: {
-      url: link.url,
+      url: link.url?.trim(),
       name: link.name,
       description,
-      readabilityPath: "pending",
+      type: linkType,
       collection: {
-        connectOrCreate: {
-          where: {
-            name_ownerId: {
-              ownerId: link.collection.ownerId,
-              name: link.collection.name,
-            },
-          },
-          create: {
-            name: link.collection.name.trim(),
-            ownerId: userId,
-          },
+        connect: {
+          id: link.collection.id,
         },
       },
       tags: {
@@ -90,8 +204,6 @@ export default async function postLink(
   });
 
   createFolder({ filePath: `archives/${newLink.collectionId}` });
-
-  archive(newLink.id, newLink.url, userId);
 
   return { response: newLink, status: 200 };
 }

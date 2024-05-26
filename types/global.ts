@@ -7,10 +7,16 @@ type OptionalExcluding<T, TRequired extends keyof T> = Partial<T> &
 export interface LinkIncludingShortenedCollectionAndTags
   extends Omit<
     Link,
-    "id" | "createdAt" | "collectionId" | "updatedAt" | "lastPreserved"
+    | "id"
+    | "createdAt"
+    | "collectionId"
+    | "updatedAt"
+    | "lastPreserved"
+    | "importDate"
   > {
   id?: number;
   createdAt?: string;
+  importDate?: string;
   collectionId?: number;
   tags: Tag[];
   pinnedBy?: {
@@ -33,6 +39,7 @@ export interface CollectionIncludingMembersAndLinkCount
   id?: number;
   ownerId?: number;
   createdAt?: string;
+  updatedAt?: string;
   _count?: { links: number };
   members: Member[];
 }
@@ -55,6 +62,12 @@ interface LinksIncludingTags extends Link {
 
 export interface PublicCollectionIncludingLinks extends Collection {
   links: LinksIncludingTags[];
+}
+
+export enum ViewMode {
+  Card = "card",
+  Grid = "grid",
+  List = "list",
 }
 
 export enum Sort {
@@ -117,7 +130,22 @@ export type DeleteUserBody = {
 };
 
 export enum ArchivedFormat {
-  screenshot,
+  png,
+  jpeg,
   pdf,
   readability,
+}
+
+export enum LinkType {
+  url,
+  pdf,
+  image,
+}
+
+export enum TokenExpiry {
+  sevenDays,
+  oneMonth,
+  twoMonths,
+  threeMonths,
+  never,
 }
